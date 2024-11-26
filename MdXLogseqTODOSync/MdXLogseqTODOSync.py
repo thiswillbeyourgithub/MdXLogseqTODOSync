@@ -10,6 +10,8 @@ class MdXLogseqTODOSync:
         self,
         input_file: Path | str,
         output_file: Path | str,
+        input_delims: tuple[str, str] = (r"<!-- BEGIN_TODO -->", r"<!-- END_TODO -->"),
+        output_delims: tuple[str, str] = (r"- BEGIN_TODO", r"- END_TODO"),
         ) -> None:
 
         """
@@ -18,8 +20,12 @@ class MdXLogseqTODOSync:
         Args:
             input_file: Path or string pointing to the input file
             output_file: Path or string pointing to the output file
+            input_delims: Tuple of (start, end) regex patterns to match input file delimiters
+            output_delims: Tuple of (start, end) regex patterns to match output file delimiters
         """
         self.input_file = Path(input_file)
         self.output_file = Path(output_file)
+        self.input_delims = input_delims
+        self.output_delims = output_delims
 
 # TODO_code
