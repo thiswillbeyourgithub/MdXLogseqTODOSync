@@ -69,7 +69,8 @@ class MdXLogseqTODOSync:
                 break  # Stop processing after end delimiter
                 
             if inside_section and pattern.search(block_content):
-                level = block.dict().get('level', 0)
+                # Get indentation level from block attribute
+                level = block.indentation_level
                 
                 # If bulletpoint_max_level is set, skip blocks that are too deep
                 if self.bulletpoint_max_level != -1 and level > self.bulletpoint_max_level:
