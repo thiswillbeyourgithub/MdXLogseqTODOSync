@@ -13,6 +13,7 @@ class MdXLogseqTODOSync:
         output_file: Path | str,
         input_delims: Sequence[str] = (r"<!-- BEGIN_TODO -->", r"<!-- END_TODO -->"),
         output_delims: Sequence[str] = (r"- BEGIN_TODO", r"- END_TODO"),
+        bulletpoint_max_level: int = -1,
         ) -> None:
 
         """
@@ -23,10 +24,12 @@ class MdXLogseqTODOSync:
             output_file: Path or string pointing to the output file
             input_delims: Tuple of (start, end) regex patterns to match input file delimiters
             output_delims: Tuple of (start, end) regex patterns to match output file delimiters
+            bulletpoint_max_level: Maximum level of bullet points to process (-1 for unlimited)
         """
         self.input_file = Path(input_file)
         self.output_file = Path(output_file)
         self.input_delims = input_delims
         self.output_delims = output_delims
+        self.bulletpoint_max_level = bulletpoint_max_level
 
 # TODO_code
