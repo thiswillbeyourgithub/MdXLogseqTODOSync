@@ -1,5 +1,6 @@
 from beartype import beartype
 from pathlib import Path
+from collections.abc import Sequence
 # TODO_imports
 
 @beartype  # this will apply to all methods
@@ -10,8 +11,8 @@ class MdXLogseqTODOSync:
         self,
         input_file: Path | str,
         output_file: Path | str,
-        input_delims: tuple[str, str] = (r"<!-- BEGIN_TODO -->", r"<!-- END_TODO -->"),
-        output_delims: tuple[str, str] = (r"- BEGIN_TODO", r"- END_TODO"),
+        input_delims: Sequence[str] = (r"<!-- BEGIN_TODO -->", r"<!-- END_TODO -->"),
+        output_delims: Sequence[str] = (r"- BEGIN_TODO", r"- END_TODO"),
         ) -> None:
 
         """
