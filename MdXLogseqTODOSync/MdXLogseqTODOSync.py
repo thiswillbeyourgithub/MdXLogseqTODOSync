@@ -39,6 +39,7 @@ class MdXLogseqTODOSync:
     def process_input(self) -> list[str]:
         """
         Process the input file using LogseqMarkdownParser.
+        Only processes blocks between input_delims markers.
         
         Returns:
             List of processed lines that match the required pattern
@@ -52,12 +53,22 @@ class MdXLogseqTODOSync:
         # Process blocks and filter based on required_pattern
         matched_lines = []
         pattern = re.compile(self.required_pattern)
+        start_delim, end_delim = self.input_delims
+        
+        # Track if we're inside the delimited section
+        inside_section = False
         
         for block in page.blocks:
-            # Get the block content and check against pattern
             block_content = block.dict().get('content', '')
-            if pattern.search(block_content):
-                # Calculate indentation based on block level
+            
+            # Check for delimiter markers
+            if start_delim in block_content:
+                inside_section = True
+                continue
+            elif end_delim in block_content:
+                break  # Stop processing after end delimiter
+                
+            if inside_section and pattern.search(block_content):
                 level = block.dict().get('level', 0)
                 
                 # If bulletpoint_max_level is set, skip blocks that are too deep
