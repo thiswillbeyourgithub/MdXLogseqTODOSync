@@ -21,13 +21,20 @@ class MdXLogseqTODOSync:
         """
         Initialize the MdXLogseqTODOSync class.
 
+        This class synchronizes TODO items between Markdown and Logseq files, respecting
+        delimiter boundaries and filtering based on patterns and bullet point levels.
+
         Args:
-            input_file: Path or string pointing to the input file
-            output_file: Path or string pointing to the output file
-            input_delims: Tuple of (start, end) regex patterns to match input file delimiters
-            output_delims: Tuple of (start, end) regex patterns to match output file delimiters
+            input_file: Path or string pointing to the input Markdown file
+            output_file: Path or string pointing to the output Logseq file
+            input_delims: Tuple of (start, end) regex patterns to match input file section
+            output_delims: Tuple of (start, end) regex patterns to match output file section
             bulletpoint_max_level: Maximum level of bullet points to process (-1 for unlimited)
             required_pattern: Regex pattern that lines must match to be included
+
+        Raises:
+            ValueError: If delimiters are missing or appear multiple times in files
+            FileNotFoundError: If input file doesn't exist
         """
         self.input_file = Path(input_file)
         self.output_file = Path(output_file)
@@ -39,14 +46,18 @@ class MdXLogseqTODOSync:
     def _validate_delimiters(self, content: str, delims: Sequence[str], file_type: str) -> None:
         """
         Validate that delimiters appear exactly once in the content.
-        
+
+        Checks both start and end delimiters to ensure they appear exactly once in the
+        given content. This helps maintain the integrity of the sync boundaries.
+
         Args:
             content: The file content to check
             delims: Tuple of (start, end) delimiters to check
             file_type: String indicating which file is being checked ('input' or 'output')
-            
+
         Raises:
-            ValueError: If delimiters are missing or appear multiple times
+            ValueError: If any delimiter is missing or appears multiple times, with a
+                      descriptive message indicating which delimiter caused the error
         """
         start_delim, end_delim = delims
         
@@ -67,10 +78,17 @@ class MdXLogseqTODOSync:
     def process_input(self) -> list[str]:
         """
         Process the input file using LogseqMarkdownParser.
-        Only processes blocks between input_delims markers.
-        
+
+        Reads the input file, validates delimiters, and processes blocks between the specified
+        input delimiters. Only blocks matching the required pattern and within the maximum
+        bullet point level are included.
+
         Returns:
-            List of processed lines that match the required pattern
+            list[str]: Processed and filtered lines with proper indentation
+
+        Raises:
+            ValueError: If input delimiters are missing or appear multiple times
+            FileNotFoundError: If input file doesn't exist
         """
         with open(self.input_file, 'r') as f:
             content = f.read()
@@ -121,9 +139,16 @@ class MdXLogseqTODOSync:
     def process_output(self, matched_lines: list[str]) -> None:
         """
         Process the output file by replacing content between delimiters with matched lines.
-        
+
+        If the output file exists, replaces content between output delimiters with the new
+        matched lines. If the file doesn't exist or doesn't contain delimiters, creates
+        a new file or appends content respectively.
+
         Args:
-            matched_lines: List of processed lines to insert
+            matched_lines: List of processed lines to insert between delimiters
+
+        Raises:
+            ValueError: If output delimiters appear multiple times in existing file
         """
         # Read the output file content
         try:
