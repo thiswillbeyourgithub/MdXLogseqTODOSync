@@ -36,6 +36,34 @@ class MdXLogseqTODOSync:
         self.bulletpoint_max_level = bulletpoint_max_level
         self.required_pattern = required_pattern
 
+    def _validate_delimiters(self, content: str, delims: Sequence[str], file_type: str) -> None:
+        """
+        Validate that delimiters appear exactly once in the content.
+        
+        Args:
+            content: The file content to check
+            delims: Tuple of (start, end) delimiters to check
+            file_type: String indicating which file is being checked ('input' or 'output')
+            
+        Raises:
+            ValueError: If delimiters are missing or appear multiple times
+        """
+        start_delim, end_delim = delims
+        
+        # Check start delimiter
+        start_count = len(re.findall(start_delim, content))
+        if start_count == 0:
+            raise ValueError(f"Start delimiter not found in {file_type} file: {start_delim}")
+        if start_count > 1:
+            raise ValueError(f"Multiple start delimiters found in {file_type} file: {start_delim}")
+            
+        # Check end delimiter
+        end_count = len(re.findall(end_delim, content))
+        if end_count == 0:
+            raise ValueError(f"End delimiter not found in {file_type} file: {end_delim}")
+        if end_count > 1:
+            raise ValueError(f"Multiple end delimiters found in {file_type} file: {end_delim}")
+
     def process_input(self) -> list[str]:
         """
         Process the input file using LogseqMarkdownParser.
@@ -46,6 +74,9 @@ class MdXLogseqTODOSync:
         """
         with open(self.input_file, 'r') as f:
             content = f.read()
+        
+        # Validate delimiters
+        self._validate_delimiters(content, self.input_delims, 'input')
             
         # Parse the content using LogseqMarkdownParser
         page = LogseqMarkdownParser.parse_text(content=content, verbose=False)
@@ -98,6 +129,9 @@ class MdXLogseqTODOSync:
         try:
             with open(self.output_file, 'r') as f:
                 content = f.read()
+                # Only validate if file exists and has content
+                if content:
+                    self._validate_delimiters(content, self.output_delims, 'output')
         except FileNotFoundError:
             content = ""  # Start with empty content if file doesn't exist
             
