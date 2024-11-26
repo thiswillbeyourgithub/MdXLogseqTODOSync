@@ -86,3 +86,37 @@ class MdXLogseqTODOSync:
             matched_lines.append(f"{indentation}- {block.dict().get('content', '')}")
         
         return matched_lines
+
+    def process_output(self, matched_lines: list[str]) -> None:
+        """
+        Process the output file by replacing content between delimiters with matched lines.
+        
+        Args:
+            matched_lines: List of processed lines to insert
+        """
+        # Read the output file content
+        try:
+            with open(self.output_file, 'r') as f:
+                content = f.read()
+        except FileNotFoundError:
+            content = ""  # Start with empty content if file doesn't exist
+            
+        start_delim, end_delim = self.output_delims
+        
+        # Create the pattern to match everything between delimiters
+        pattern = f"{start_delim}.*?{end_delim}"
+        
+        # Prepare the replacement content
+        replacement = f"{start_delim}\n"
+        replacement += "\n".join(matched_lines)
+        replacement += f"\n{end_delim}"
+        
+        # Replace content between delimiters or append if not found
+        if re.search(pattern, content, re.DOTALL):
+            new_content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+        else:
+            new_content = content + "\n" + replacement if content else replacement
+            
+        # Write the modified content back to the file
+        with open(self.output_file, 'w') as f:
+            f.write(new_content)
