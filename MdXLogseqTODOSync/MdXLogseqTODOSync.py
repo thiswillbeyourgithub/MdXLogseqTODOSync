@@ -50,8 +50,8 @@ class MdXLogseqTODOSync:
         # Parse the content using LogseqMarkdownParser
         page = LogseqMarkdownParser.parse_text(content=content, verbose=False)
         
-        # Process blocks and filter based on required_pattern
-        matched_lines = []
+        # First collect all matching blocks
+        matching_blocks = []
         pattern = re.compile(self.required_pattern)
         start_delim, end_delim = self.input_delims
         
@@ -69,15 +69,20 @@ class MdXLogseqTODOSync:
                 break  # Stop processing after end delimiter
                 
             if inside_section and pattern.search(block_content):
-                # Get indentation level from block attribute
-                level = block.indentation_level
+                # Store blocks that match the pattern
+                matching_blocks.append(block)
+        
+        # Process the matching blocks
+        matched_lines = []
+        for block in matching_blocks:
+            level = block.indentation_level
+            
+            # If bulletpoint_max_level is set, skip blocks that are too deep
+            if self.bulletpoint_max_level != -1 and level > self.bulletpoint_max_level:
+                continue
                 
-                # If bulletpoint_max_level is set, skip blocks that are too deep
-                if self.bulletpoint_max_level != -1 and level > self.bulletpoint_max_level:
-                    continue
-                    
-                # Add appropriate number of spaces for indentation
-                indentation = '  ' * level
-                matched_lines.append(f"{indentation}- {block_content}")
+            # Add appropriate number of spaces for indentation
+            indentation = '  ' * level
+            matched_lines.append(f"{indentation}- {block.dict().get('content', '')}")
         
         return matched_lines
