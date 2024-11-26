@@ -1,7 +1,8 @@
 from beartype import beartype
 from pathlib import Path
 from collections.abc import Sequence
-# TODO_imports
+import LogseqMarkdownParser
+import re
 
 @beartype  # this will apply to all methods
 class MdXLogseqTODOSync:
@@ -35,4 +36,36 @@ class MdXLogseqTODOSync:
         self.bulletpoint_max_level = bulletpoint_max_level
         self.required_pattern = required_pattern
 
-# TODO_code
+    def process_input(self) -> list[str]:
+        """
+        Process the input file using LogseqMarkdownParser.
+        
+        Returns:
+            List of processed lines that match the required pattern
+        """
+        with open(self.input_file, 'r') as f:
+            content = f.read()
+            
+        # Parse the content using LogseqMarkdownParser
+        page = LogseqMarkdownParser.parse_text(content=content, verbose=False)
+        
+        # Process blocks and filter based on required_pattern
+        matched_lines = []
+        pattern = re.compile(self.required_pattern)
+        
+        for block in page.blocks:
+            # Get the block content and check against pattern
+            block_content = block.dict().get('content', '')
+            if pattern.search(block_content):
+                # Calculate indentation based on block level
+                level = block.dict().get('level', 0)
+                
+                # If bulletpoint_max_level is set, skip blocks that are too deep
+                if self.bulletpoint_max_level != -1 and level > self.bulletpoint_max_level:
+                    continue
+                    
+                # Add appropriate number of spaces for indentation
+                indentation = '  ' * level
+                matched_lines.append(f"{indentation}- {block_content}")
+        
+        return matched_lines
