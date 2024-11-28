@@ -191,7 +191,7 @@ class MdXLogseqTODOSync:
 
         # Prepare the replacement content
         replacement = f"{start_delim}\n"
-        replacement += dedent("\n".join(matched_lines))
+        replacement += dedent("\n".join([m for m in matched_lines if not m.lstrip().startswith("id:: ")]))
         replacement += f"\n{end_delim}"
 
         # Replace content between delimiters or append if not found
