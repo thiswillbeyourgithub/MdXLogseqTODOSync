@@ -194,7 +194,7 @@ class MdXLogseqTODOSync:
 
         # Prepare the replacement content
         replacement = f"{start_delim}\n"
-        filtered_lines = [m for m in matched_lines if not m.lstrip().startswith("id:: ")]
+        filtered_lines = [m for m in "\n".join(matched_lines).splitlines() if not m.lstrip().startswith("id:: ")]
         if self.remove_prefix:
             # Remove TODO/DONE prefix while preserving indentation
             filtered_lines = [re.sub(r'^(\s*- )(TODO|DONE)\s+', r'\1', line) for line in filtered_lines]
