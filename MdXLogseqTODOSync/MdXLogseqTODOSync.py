@@ -35,7 +35,7 @@ class MdXLogseqTODOSync:
         Args:
             input_file: Path or string pointing to the input Markdown/Logseq file
             output_file: Path or string pointing to the output Markdown/Logseq file
-            input_delim_start: Str regex pattern to match the start of input section
+            input_delim_start: Str regex pattern to match the start of input section (__START__ for BOF)
             input_delim_end: Str regex pattern to match the end of input section (__END__ for EOF)
             output_delim_start: Str regex pattern to match the start of output section
             output_delim_end: Str regex pattern to match the end of output section
@@ -78,11 +78,12 @@ class MdXLogseqTODOSync:
         start_delim, end_delim = delims
 
         # Check start delimiter
-        start_count = len(re.findall(start_delim, content))
-        if start_count == 0:
-            raise ValueError(f"Start delimiter not found in {file_type} file: {start_delim}")
-        if start_count > 1:
-            raise ValueError(f"Multiple start delimiters found in {file_type} file: {start_delim}")
+        if start_delim != "__START__":
+            start_count = len(re.findall(start_delim, content))
+            if start_count == 0:
+                raise ValueError(f"Start delimiter not found in {file_type} file: {start_delim}")
+            if start_count > 1:
+                raise ValueError(f"Multiple start delimiters found in {file_type} file: {start_delim}")
 
         # Check end delimiter
         end_count = len(re.findall(end_delim, content))
@@ -130,7 +131,9 @@ class MdXLogseqTODOSync:
             block_content = block.content
 
             # Check for delimiter markers
-            if re.findall(start_delim, block_content):
+            if start_delim == "__START__":
+                inside_section = True
+            elif re.findall(start_delim, block_content):
                 inside_section = True
                 continue
             elif inside_section and end_delim != "__END__" and re.findall(end_delim, block_content):
