@@ -1,0 +1,7 @@
+- This is not relevant
+- Things I want to do:
+    - TODO thing A
+    - TODO thing B
+        - TODO thing B2
+    - TODO thing C
+- Nothing else
