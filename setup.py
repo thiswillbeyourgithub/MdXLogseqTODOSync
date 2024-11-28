@@ -33,7 +33,7 @@ setup(
     install_requires=[
         'fire >= 0.6.0',
         'beartype >= 0.18.5',
-        # TODO_req
+        "LogseqMarkdownParser"
     ],
     extra_require={
     'feature1': [
