@@ -50,7 +50,7 @@ mdxlogseqtodosync \
 - `output_delim_start`: Start delimiter for output file (default: `"<!-- BEGIN_TODO -->"`)
 - `output_delim_end`: End delimiter for output file (default: `"<!-- END_TODO -->"`)
 - `bulletpoint_max_level`: Maximum bullet point level to process (-1 for unlimited)
-- `required_pattern`: Regex pattern that lines must match to be included
+- `required_pattern`: Regex pattern that lines must match to be included. Default is `r"\s*- (TODO|DONE)"`
 
 ### File Format
 

@@ -21,7 +21,7 @@ class MdXLogseqTODOSync:
         output_delim_end: str = r"<!-- END_TODO -->",
 
         bulletpoint_max_level: int = -1,
-        required_pattern: str = r".*",
+        required_pattern: str = r"\s*- (TODO|DONE)",
         ) -> None:
 
         """
@@ -40,7 +40,7 @@ class MdXLogseqTODOSync:
             output_delim_start: Str regex pattern to match the start of output section
             output_delim_end: Str regex pattern to match the end of output section
             bulletpoint_max_level: Maximum level of bullet points to process (-1 for unlimited)
-            required_pattern: Regex pattern that lines must match to be included
+            required_pattern: Regex pattern that lines must match to be included. Default is `r"\s*- (TODO|DONE)"`
 
         Raises:
             ValueError: If delimiters are missing or appear multiple times in files
