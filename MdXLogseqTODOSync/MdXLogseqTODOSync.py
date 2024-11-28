@@ -12,8 +12,8 @@ class MdXLogseqTODOSync:
         self,
         input_file: Path | str,
         output_file: Path | str,
-        input_delims: Sequence[str] = (r"<!-- BEGIN_TODO -->", r"<!-- END_TODO -->"),
-        output_delims: Sequence[str] = (r"- BEGIN_TODO", r"- END_TODO"),
+        input_delims: Sequence[str] = (r"- BEGIN_TODO", r"- END_TODO"),
+        output_delims: Sequence[str] = (r"<!-- BEGIN_TODO -->", r"<!-- END_TODO -->"),
         bulletpoint_max_level: int = -1,
         required_pattern: str = r".*",
         ) -> None:
