@@ -40,6 +40,7 @@ mdxlogseqtodosync \
     --output-end "<!-- END_TODO -->" \
     --pattern "TODO|DONE" \
     --max-level 2 \
+    --remove-prefix false \
     input.md output.md
 ```
 
@@ -53,6 +54,7 @@ mdxlogseqtodosync \
 - `output_delim_end`: End delimiter for output file (default: `"<!-- END_TODO -->"`)
 - `bulletpoint_max_level`: Maximum bullet point level to process (-1 for unlimited)
 - `required_pattern`: Regex pattern that lines must match to be included. Default is `r"\s*- (TODO|DONE)"`
+- `remove_prefix`: Boolean to control whether TODO/DONE prefixes are removed from output (default: True)
 
 ### File Format
 
