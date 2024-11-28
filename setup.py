@@ -35,13 +35,5 @@ setup(
         'beartype >= 0.18.5',
         "LogseqMarkdownParser"
     ],
-    extra_require={
-    'feature1': [
-        # TODO_req
-        ],
-    'feature2': [
-        # TODO_req
-        ]
-    },
 
 )
