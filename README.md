@@ -24,6 +24,8 @@ A Python tool to synchronize TODO items between Markdown and Logseq files. It al
 The tool is primarily used from the command line:
 
 ```bash
+mdxlogseqtodosync --help
+
 # Basic usage
 mdxlogseqtodosync input.md output.md
 
