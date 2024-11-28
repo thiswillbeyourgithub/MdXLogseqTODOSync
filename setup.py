@@ -8,20 +8,19 @@ with open("README.md", "r") as readme:
 setup(
     name="MdXLogseqTODOSync",
     version="0.0.1",
-    description="TODO_description",
+    description="Script to always sync a Logseq TODO list with a markdown file",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="TODO_URL",
+    url="https://github.com/thiswillbeyourgithub/MdXLogseqTODOSync",
     packages=find_packages(),
 
-    # TODO_check_values
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
     license="GPLv3",
-    keywords=["TODO_keywords"],
+    keywords=["logseq", "todo", "list", "markdown", "md", "organization", "productivity"],
     python_requires=">=3.11",
 
     entry_points={
@@ -33,7 +32,6 @@ setup(
     install_requires=[
         'fire >= 0.6.0',
         'beartype >= 0.18.5',
-        "LogseqMarkdownParser"
+        "LogseqMarkdownParser >= 3.3"
     ],
-
 )
