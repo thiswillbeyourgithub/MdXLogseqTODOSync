@@ -29,20 +29,23 @@ class MdXLogseqTODOSync:
 
         This class synchronizes TODO items between Markdown and Logseq files, respecting
         delimiter boundaries and filtering based on patterns and bullet point levels.
+        It reads from an input file, processes the content between specified delimiters,
+        and writes the filtered content to an output file.
 
         Args:
-            input_file: Path or string pointing to the input Markdown file
-            output_file: Path or string pointing to the output Logseq file
-            input_delim_start: Str regex patterns to match input file section
-            input_delim_end: Str regex patterns to match input file section
-            output_delim_start: Str regex patterns to match output file section
-            output_delim_end: Str regex patterns to match output file section
+            input_file: Path or string pointing to the input Markdown/Logseq file
+            output_file: Path or string pointing to the output Markdown/Logseq file
+            input_delim_start: Str regex pattern to match the start of input section
+            input_delim_end: Str regex pattern to match the end of input section (__END__ for EOF)
+            output_delim_start: Str regex pattern to match the start of output section
+            output_delim_end: Str regex pattern to match the end of output section
             bulletpoint_max_level: Maximum level of bullet points to process (-1 for unlimited)
             required_pattern: Regex pattern that lines must match to be included
 
         Raises:
             ValueError: If delimiters are missing or appear multiple times in files
             FileNotFoundError: If input file doesn't exist
+            AssertionError: If no blocks or matching lines are found in input
         """
         self.input_file = Path(input_file)
         self.output_file = Path(output_file)
@@ -94,7 +97,8 @@ class MdXLogseqTODOSync:
 
         Reads the input file, validates delimiters, and processes blocks between the specified
         input delimiters. Only blocks matching the required pattern and within the maximum
-        bullet point level are included.
+        bullet point level are included. The special end delimiter "__END__" can be used to
+        process until the end of file.
 
         Returns:
             list[str]: Processed and filtered lines with proper indentation
@@ -102,6 +106,7 @@ class MdXLogseqTODOSync:
         Raises:
             ValueError: If input delimiters are missing or appear multiple times
             FileNotFoundError: If input file doesn't exist
+            AssertionError: If no blocks or matching lines are found in input
         """
         with open(self.input_file, 'r') as f:
             content = f.read()
@@ -156,13 +161,15 @@ class MdXLogseqTODOSync:
 
         If the output file exists, replaces content between output delimiters with the new
         matched lines. If the file doesn't exist or doesn't contain delimiters, creates
-        a new file or appends content respectively.
+        a new file or appends content respectively. The content is properly dedented
+        before insertion.
 
         Args:
             matched_lines: List of processed lines to insert between delimiters
 
         Raises:
             ValueError: If output delimiters appear multiple times in existing file
+            OSError: If unable to write to output file
         """
         # Read the output file content
         try:
