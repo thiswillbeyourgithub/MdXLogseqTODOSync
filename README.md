@@ -21,18 +21,24 @@ A Python tool to synchronize TODO items between Markdown and Logseq files. It al
 
 ## Usage
 
-Basic usage example:
+The tool is primarily used from the command line:
 
-```python
-from pathlib import Path
-from MdXLogseqTODOSync import MdXLogseqTODOSync
+```bash
+# Basic usage
+mdxlogseqtodosync input.md output.md
 
-sync = MdXLogseqTODOSync(
-    input_file="logseq_notes.md",
-    output_file="project_todos.md",
-    required_pattern=r"TODO|DONE",  # Only sync lines containing TODO or DONE
-    bulletpoint_max_level=2  # Only sync top 2 levels of bullets
-)
+# With filtering options
+mdxlogseqtodosync --pattern "TODO|DONE" --max-level 2 input.md output.md
+
+# Full options
+mdxlogseqtodosync \
+    --input-start "- BEGIN_TODO" \
+    --input-end "- END_TODO" \
+    --output-start "<!-- BEGIN_TODO -->" \
+    --output-end "<!-- END_TODO -->" \
+    --pattern "TODO|DONE" \
+    --max-level 2 \
+    input.md output.md
 ```
 
 ### Configuration Options
