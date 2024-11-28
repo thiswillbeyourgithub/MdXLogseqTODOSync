@@ -50,10 +50,10 @@ class MdXLogseqTODOSync:
         self.bulletpoint_max_level = bulletpoint_max_level
         self.required_pattern = required_pattern
 
-        out = self.process_input()
-        breakpoint()
-        out2 = self.process_output()
-        breakpoint()
+        matched_lines = self.process_input()
+        assert matched_lines, "No matching lines found in input"
+        self.process_output(matched_lines)
+        return
 
     def _validate_delimiters(self, content: str, delims: Sequence[str], file_type: str) -> None:
         """
@@ -118,33 +118,35 @@ class MdXLogseqTODOSync:
         
         # Track if we're inside the delimited section
         inside_section = False
+
+        assert page.blocks, "No blocks found in input"
         
         for block in page.blocks:
-            block_content = block.dict().get('content', '')
+            block_content = block.content
             
             # Check for delimiter markers
-            if start_delim in block_content:
+            if re.findall(start_delim, block_content):
                 inside_section = True
                 continue
-            elif end_delim != "__END__" and end_delim in block_content:
+            elif inside_section and end_delim != "__END__" and re.findall(end_delim, block_content):
                 break  # Stop processing after end delimiter
                 
             if inside_section and pattern.search(block_content):
                 # Store blocks that match the pattern
                 matching_blocks.append(block)
         
+        assert matching_blocks, "No blocks found in input"
+
         # Process the matching blocks
         matched_lines = []
-        for block in matching_blocks:
-            level = block.indentation_level
-            
-            # If bulletpoint_max_level is set, skip blocks that are too deep
-            if self.bulletpoint_max_level != -1 and level > self.bulletpoint_max_level:
-                continue
-                
-            # Add appropriate number of spaces for indentation
-            indentation = '  ' * level
-            matched_lines.append(f"{indentation}- {block.dict().get('content', '')}")
+
+        # If bulletpoint_max_level is set, skip blocks that are too deep
+        if self.bulletpoint_max_level != -1:
+            for block in matching_blocks:
+                if block.indentation_level >= self.bulletpoint_max_level:
+                    matched_lines.append(block.content)
+        else:
+            matched_lines = [b.content for b in matching_blocks]
         
         return matched_lines
 
