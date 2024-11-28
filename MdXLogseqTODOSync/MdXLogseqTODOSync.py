@@ -12,8 +12,13 @@ class MdXLogseqTODOSync:
         self,
         input_file: Path | str,
         output_file: Path | str,
-        input_delims: Sequence[str] = (r"- BEGIN_TODO", r"- END_TODO"),
-        output_delims: Sequence[str] = (r"<!-- BEGIN_TODO -->", r"<!-- END_TODO -->"),
+
+        input_delim_start: str = r"- BEGIN_TODO",
+        input_delim_end: str = r"- END_TODO",
+
+        output_delim_start: str = r"<!-- BEGIN_TODO -->",
+        output_delim_end: str = r"<!-- END_TODO -->",
+
         bulletpoint_max_level: int = -1,
         required_pattern: str = r".*",
         ) -> None:
@@ -27,8 +32,10 @@ class MdXLogseqTODOSync:
         Args:
             input_file: Path or string pointing to the input Markdown file
             output_file: Path or string pointing to the output Logseq file
-            input_delims: Tuple of (start, end) regex patterns to match input file section
-            output_delims: Tuple of (start, end) regex patterns to match output file section
+            input_delim_start: Str regex patterns to match input file section
+            input_delim_end: Str regex patterns to match input file section
+            output_delim_start: Str regex patterns to match output file section
+            output_delim_end: Str regex patterns to match output file section
             bulletpoint_max_level: Maximum level of bullet points to process (-1 for unlimited)
             required_pattern: Regex pattern that lines must match to be included
 
@@ -38,10 +45,15 @@ class MdXLogseqTODOSync:
         """
         self.input_file = Path(input_file)
         self.output_file = Path(output_file)
-        self.input_delims = input_delims
-        self.output_delims = output_delims
+        self.input_delims = [input_delim_start, input_delim_end]
+        self.output_delims = [output_delim_start, output_delim_end]
         self.bulletpoint_max_level = bulletpoint_max_level
         self.required_pattern = required_pattern
+
+        out = self.process_input()
+        breakpoint()
+        out2 = self.process_output()
+        breakpoint()
 
     def _validate_delimiters(self, content: str, delims: Sequence[str], file_type: str) -> None:
         """
@@ -70,7 +82,7 @@ class MdXLogseqTODOSync:
             
         # Check end delimiter
         end_count = len(re.findall(end_delim, content))
-        if end_count == 0:
+        if end_count == 0 or end_delim == "__END__":
             raise ValueError(f"End delimiter not found in {file_type} file: {end_delim}")
         if end_count > 1:
             raise ValueError(f"Multiple end delimiters found in {file_type} file: {end_delim}")
@@ -114,7 +126,7 @@ class MdXLogseqTODOSync:
             if start_delim in block_content:
                 inside_section = True
                 continue
-            elif end_delim in block_content:
+            elif end_delim != "__END__" and end_delim in block_content:
                 break  # Stop processing after end delimiter
                 
             if inside_section and pattern.search(block_content):
