@@ -82,7 +82,7 @@ class MdXLogseqTODOSync:
             
         # Check end delimiter
         end_count = len(re.findall(end_delim, content))
-        if end_count == 0 or end_delim == "__END__":
+        if end_count == 0 and end_delim != "__END__":
             raise ValueError(f"End delimiter not found in {file_type} file: {end_delim}")
         if end_count > 1:
             raise ValueError(f"Multiple end delimiters found in {file_type} file: {end_delim}")
