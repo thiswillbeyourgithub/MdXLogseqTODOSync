@@ -1,3 +1,4 @@
+from textwrap import dedent
 from beartype import beartype
 from pathlib import Path
 from collections.abc import Sequence
@@ -181,7 +182,7 @@ class MdXLogseqTODOSync:
         
         # Prepare the replacement content
         replacement = f"{start_delim}\n"
-        replacement += "\n".join(matched_lines)
+        replacement += dedent("\n".join(matched_lines))
         replacement += f"\n{end_delim}"
         
         # Replace content between delimiters or append if not found
