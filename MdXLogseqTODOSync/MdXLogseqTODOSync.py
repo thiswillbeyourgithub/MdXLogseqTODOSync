@@ -221,7 +221,7 @@ class MdXLogseqTODOSync:
         if self.remove_prefix:
             # Remove TODO/DONE prefix while preserving indentation
             filtered_lines = [re.sub(r'^(\s*- )(TODO|DONE)\s+', r'\1', line) for line in filtered_lines]
-        replacement += dedent("\n".join(filtered_lines))
+        replacement += dedent("\n".join(filtered_lines).replace("\t", "    "))
         replacement += f"\n{end_delim}"
 
         # Replace content between delimiters or append if not found
