@@ -41,6 +41,8 @@ mdxlogseqtodosync \
     --pattern "TODO|DONE" \
     --max-level 2 \
     --remove-prefix false \
+    --remove-block-properties true \
+    --keep-new-lines true \
     input.md output.md
 ```
 
@@ -55,6 +57,8 @@ mdxlogseqtodosync \
 - `bulletpoint_max_level`: Maximum bullet point level to process (-1 for unlimited)
 - `required_pattern`: Regex pattern that lines must match to be included. Default is `r"\s*- (TODO|DONE)"`
 - `remove_prefix`: Boolean to control whether TODO/DONE prefixes are removed from output (default: True)
+- `remove_block_properties`: Boolean to control whether Logseq block properties are removed (default: True)
+- `keep_new_lines`: Boolean to control whether empty lines are preserved (default: True)
 
 ### File Format
 
