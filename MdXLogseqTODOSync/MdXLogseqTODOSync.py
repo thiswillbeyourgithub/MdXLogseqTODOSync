@@ -23,6 +23,7 @@ class MdXLogseqTODOSync:
         bulletpoint_max_level: int = -1,
         required_pattern: str = r"\s*- (TODO|DONE)",
         remove_prefix: bool = True,
+        remove_block_properties: bool = True,
         ) -> None:
 
         """
@@ -43,6 +44,7 @@ class MdXLogseqTODOSync:
             bulletpoint_max_level: Maximum level of bullet points to process (-1 for unlimited)
             required_pattern: Regex pattern that lines must match to be included. Default is `r"\s*- (TODO|DONE)"`
             remove_prefix: If True, removes the TODO/DONE prefix from matched lines. Default is True.
+            remove_block_properties: If True, removes the logseq block properties. Default is True.
 
         Raises:
             ValueError: If delimiters are missing or appear multiple times in files
@@ -56,6 +58,7 @@ class MdXLogseqTODOSync:
         self.bulletpoint_max_level = bulletpoint_max_level
         self.required_pattern = required_pattern
         self.remove_prefix = remove_prefix
+        self.remove_block_properties = remove_block_properties
 
         matched_lines = self.process_input()
         assert matched_lines, "No matching lines found in input"
@@ -155,9 +158,10 @@ class MdXLogseqTODOSync:
         for block in matching_blocks:
             # If bulletpoint_max_level is set, skip blocks that are too deep
             if self.bulletpoint_max_level == -1 or block.indentation_level >= self.bulletpoint_max_level:
-                keys = block.properties.keys()
-                for k in keys:
-                    block.del_property(k)
+                if self.remove_block_properties:
+                    keys = block.properties.keys()
+                    for k in keys:
+                        block.del_property(k)
                 matched_lines.append(block.content)
 
         return matched_lines
