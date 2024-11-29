@@ -139,8 +139,12 @@ class MdXLogseqTODOSync:
 
         assert page.blocks, "No blocks found in input"
 
+        previous_indentation = page.blocks[0].indentation_level
         for block in page.blocks:
             block_content = block.content
+
+            if block.indentation_level < previous_indentation:
+                previous_indentation = block.indentation_level
 
             # Check for delimiter markers
             if start_delim == "__START__":
@@ -151,9 +155,10 @@ class MdXLogseqTODOSync:
             elif inside_section and end_delim != "__END__" and re.findall(end_delim, block_content):
                 break  # Stop processing after end delimiter
 
-            if inside_section and pattern.search(block_content):
+            if inside_section and (pattern.search(block_content) or (self.recursive and block.indentation_level > previous_indentation)):
                 # Store blocks that match the pattern
                 matching_blocks.append(block)
+                previous_indentation = block.indentation_level
 
         assert matching_blocks, "No blocks found in input"
 
@@ -161,6 +166,9 @@ class MdXLogseqTODOSync:
         matched_lines = []
         previous_indentation = matching_blocks[0].indentation_level
         for block in matching_blocks:
+            if block.indentation_level < previous_indentation:
+                previous_indentation = block.indentation_level
+
             # If bulletpoint_max_level is set, skip blocks that are too deep
             if (
                     self.bulletpoint_max_level == -1 or
