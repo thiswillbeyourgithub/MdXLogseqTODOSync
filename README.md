@@ -43,6 +43,7 @@ mdxlogseqtodosync \
     --remove-prefix false \
     --remove-block-properties true \
     --keep-new-lines true \
+    --recursive true \
     input.md output.md
 ```
 
@@ -59,6 +60,7 @@ mdxlogseqtodosync \
 - `remove_prefix`: Boolean to control whether TODO/DONE prefixes are removed from output (default: True)
 - `remove_block_properties`: Boolean to control whether Logseq block properties are removed (default: True)
 - `keep_new_lines`: Boolean to control whether empty lines are preserved (default: True)
+- `recursive`: Boolean to control whether nested TODOs under a matching parent are included (default: True)
 
 ### File Format
 

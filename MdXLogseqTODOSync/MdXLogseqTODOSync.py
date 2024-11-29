@@ -48,6 +48,7 @@ class MdXLogseqTODOSync:
             remove_prefix: If True, removes the TODO/DONE prefix from matched lines. Default is True.
             remove_block_properties: If True, removes the logseq block properties. Default is True.
             keep_new_lines: If False, will not keep the newlines from logseq. Default is True.
+            recursive: If True, will process nested TODO items under a matching parent. Default is True.
 
         Raises:
             ValueError: If delimiters are missing or appear multiple times in files
