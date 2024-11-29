@@ -151,13 +151,14 @@ class MdXLogseqTODOSync:
         # Process the matching blocks
         matched_lines = []
 
-        # If bulletpoint_max_level is set, skip blocks that are too deep
-        if self.bulletpoint_max_level != -1:
-            for block in matching_blocks:
-                if block.indentation_level >= self.bulletpoint_max_level:
-                    matched_lines.append(block.content)
-        else:
-            matched_lines = [b.content for b in matching_blocks]
+        matched_lines = []
+        for block in matching_blocks:
+            # If bulletpoint_max_level is set, skip blocks that are too deep
+            if self.bulletpoint_max_level == -1 or block.indentation_level >= self.bulletpoint_max_level:
+                keys = block.properties.keys()
+                for k in keys:
+                    block.del_property(k)
+                matched_lines.append(block.content)
 
         return matched_lines
 
