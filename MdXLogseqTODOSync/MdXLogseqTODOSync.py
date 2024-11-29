@@ -7,7 +7,7 @@ import re
 
 @beartype  # this will apply to all methods
 class MdXLogseqTODOSync:
-    VERSION: str = "0.0.8"
+    VERSION: str = "0.0.9"
 
     def __init__(
         self,
