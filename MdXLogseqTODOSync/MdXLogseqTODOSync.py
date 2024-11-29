@@ -24,6 +24,7 @@ class MdXLogseqTODOSync:
         required_pattern: str = r"\s*- (TODO|DONE)",
         remove_prefix: bool = True,
         remove_block_properties: bool = True,
+        keep_new_lines: bool = True
         ) -> None:
 
         """
@@ -45,6 +46,7 @@ class MdXLogseqTODOSync:
             required_pattern: Regex pattern that lines must match to be included. Default is `r"\s*- (TODO|DONE)"`
             remove_prefix: If True, removes the TODO/DONE prefix from matched lines. Default is True.
             remove_block_properties: If True, removes the logseq block properties. Default is True.
+            keep_new_lines: If False, will not keep the newlines from logseq. Default is True.
 
         Raises:
             ValueError: If delimiters are missing or appear multiple times in files
@@ -59,6 +61,7 @@ class MdXLogseqTODOSync:
         self.required_pattern = required_pattern
         self.remove_prefix = remove_prefix
         self.remove_block_properties = remove_block_properties
+        self.keep_new_lines = keep_new_lines
 
         matched_lines = self.process_input()
         assert matched_lines, "No matching lines found in input"
@@ -199,7 +202,7 @@ class MdXLogseqTODOSync:
 
         # Prepare the replacement content
         replacement = f"{start_delim}\n"
-        filtered_lines = [m for m in matched_lines]
+        filtered_lines = [m for m in matched_lines if (self.keep_new_lines or m.strip())]
         if self.remove_prefix:
             # Remove TODO/DONE prefix while preserving indentation
             filtered_lines = [re.sub(r'^(\s*- )(TODO|DONE)\s+', r'\1', line) for line in filtered_lines]
