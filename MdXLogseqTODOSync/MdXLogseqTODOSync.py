@@ -24,7 +24,8 @@ class MdXLogseqTODOSync:
         required_pattern: str = r"\s*- (TODO|DONE)",
         remove_prefix: bool = True,
         remove_block_properties: bool = True,
-        keep_new_lines: bool = True
+        keep_new_lines: bool = True,
+        recursive: bool = True,
         ) -> None:
 
         """
@@ -62,6 +63,7 @@ class MdXLogseqTODOSync:
         self.remove_prefix = remove_prefix
         self.remove_block_properties = remove_block_properties
         self.keep_new_lines = keep_new_lines
+        self.recursive = True
 
         matched_lines = self.process_input()
         assert matched_lines, "No matching lines found in input"
@@ -156,9 +158,15 @@ class MdXLogseqTODOSync:
 
         # Process the matching blocks
         matched_lines = []
+        previous_indentation = matching_blocks[0].indentation_level
         for block in matching_blocks:
             # If bulletpoint_max_level is set, skip blocks that are too deep
-            if self.bulletpoint_max_level == -1 or block.indentation_level >= self.bulletpoint_max_level:
+            if (
+                    self.bulletpoint_max_level == -1 or
+                    block.indentation_level >= self.bulletpoint_max_level or
+                    (self.recursive and block.indentation_level > previous_indentation)
+            ):
+                previous_indentation = block.indentation_level
                 if self.remove_block_properties:
                     keys = block.properties.keys()
                     for k in keys:
