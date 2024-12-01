@@ -13,11 +13,11 @@ A Python tool to synchronize TODO items between Markdown and Logseq files. It al
 
 ## Getting started
 * From pypi:
-    * As a tool: `uvx MdXLogseqTODOSync@latest --help`  # TODO: can this be used as a tool?
+    * As a tool: `uvx MdXLogseqTODOSync@latest --help`
     * Via uv: `uv pip install MdXLogseqTODOSync`
     * Via pip: `pip install MdXLogseqTODOSync`
 * From github:
-* Clone this repo then `pip install .`
+    * Clone this repo then `pip install .`
 
 ## Usage
 
