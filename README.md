@@ -2,6 +2,8 @@
 
 A Python tool to synchronize TODO items between Markdown and Logseq files. It allows you to maintain TODO lists across different markdown formats while respecting delimiters and filtering based on patterns and bullet point levels.
 
+I made this so that updating my [logseq](https://github.com/logseq/logseq) graph's TODOs about a given repository would update the README.md of said repository.
+
 ## Features
 
 - Synchronize TODO items between different markdown files
