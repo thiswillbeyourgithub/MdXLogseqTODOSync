@@ -22,8 +22,8 @@ class MdXLogseqTODOSync:
         output_delim_end: str = r"<!-- END_TODO -->",
 
         bulletpoint_max_level: int = -1,
-        must_match_regex: str = r"\s*- (TODO|DONE|DOING|NOW|LATER|#+) ",
-        sub_pattern: typing.Optional[typing.Tuple[str, str]] = (r"(\s*)- (TODO|DONE|DOING|NOW|LATER) ", r"\1- "),
+        must_match_regex: str = r"^\s*- (TODO|DONE|DOING|NOW|LATER|#+) ",
+        sub_pattern: typing.Optional[typing.Tuple[str, str]] = (r"^(\s*)- (TODO|DONE|DOING|NOW|LATER) ", r"\1- "),
         remove_block_properties: bool = True,
         keep_new_lines: bool = True,
         recursive: bool = True,
