@@ -32,7 +32,7 @@ MdXLogseqTODOSync --help
 MdXLogseqTODOSync input.md output.md
 
 # With filtering options
-MdXLogseqTODOSync --must-match-regex "TODO|DONE" --bulletpoint-max-level 2 input.md output.md
+MdXLogseqTODOSync --must_match_regex "TODO|DONE" --bulletpoint-max-level 2 input.md output.md
 
 # Full options
 MdXLogseqTODOSync \
@@ -40,7 +40,7 @@ MdXLogseqTODOSync \
     --input-delim-end "- END_TODO" \
     --output-delim-start "<!-- BEGIN_TODO -->" \
     --output-delim-end "<!-- END_TODO -->" \
-    --must-match-regex "TODO|DONE" \
+    --must_match_regex "TODO|DONE" \
     --bulletpoint-max-level 2 \
     --sub-pattern '(\s*)- (TODO|DONE|DOING|NOW|LATER) ' '\\1- ' \
     --remove-block-properties \
