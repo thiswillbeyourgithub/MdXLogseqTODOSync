@@ -51,18 +51,18 @@ mdxlogseqtodosync \
 
 ### Configuration Options
 
-- `input_file`: Source markdown file path
-- `output_file`: Destination markdown file path
-- `input_delim_start`: Start delimiter pattern for input file (default: `"- BEGIN_TODO"`)
-- `input_delim_end`: End delimiter pattern for input file (default: `"- END_TODO"`)
-- `output_delim_start`: Start delimiter for output file (default: `"<!-- BEGIN_TODO -->"`)
-- `output_delim_end`: End delimiter for output file (default: `"<!-- END_TODO -->"`)
-- `bulletpoint_max_level`: Maximum bullet point level to process (-1 for unlimited)
-- `required_pattern`: Regex pattern that lines must match to be included. Default is `r"(TODO|DONE|DOING|NOW|LATER)"`
-- `remove_pattern`: Boolean to control whether the required pattern is removed from matched lines (default: True)
-- `remove_block_properties`: Boolean to control whether Logseq block properties are removed (default: True)
-- `keep_new_lines`: Boolean to control whether empty lines are preserved (default: True)
-- `recursive`: Boolean to control whether nested TODOs under a matching parent are included (default: True)
+- `input_file`: Path or string pointing to the input Markdown/Logseq file
+- `output_file`: Path or string pointing to the output Markdown/Logseq file
+- `input_delim_start`: Regex pattern to match the start of input section. Use "__START__" for beginning of file (default: `"- BEGIN_TODO"`)
+- `input_delim_end`: Regex pattern to match the end of input section. Use "__END__" for end of file (default: `"- END_TODO"`)
+- `output_delim_start`: Regex pattern to match the start of output section (default: `"<!-- BEGIN_TODO -->"`)
+- `output_delim_end`: Regex pattern to match the end of output section (default: `"<!-- END_TODO -->"`)
+- `bulletpoint_max_level`: Maximum level of bullet points to process. Use -1 for unlimited
+- `must_match_regex`: Regex pattern that lines must match to be included (default: `r"\s*- (TODO|DONE|DOING|NOW|LATER|#+) "`)
+- `sub_pattern`: Optional tuple of (search pattern, replace pattern) to modify matched lines (default: `(r"(\s*)- (TODO|DONE|DOING|NOW|LATER) ", r"\1- ")`)
+- `remove_block_properties`: If True, removes Logseq block properties (default: True)
+- `keep_new_lines`: If True, preserves newlines from Logseq (default: True)
+- `recursive`: If True, processes nested TODO items under a matching parent (default: True)
 
 ### File Format
 
