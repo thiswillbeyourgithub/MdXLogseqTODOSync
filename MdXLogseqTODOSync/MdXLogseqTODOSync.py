@@ -38,23 +38,24 @@ class MdXLogseqTODOSync:
         and writes the filtered content to an output file.
 
         Args:
-            input_file: Path or string pointing to the input Markdown/Logseq file
-            output_file: Path or string pointing to the output Markdown/Logseq file
-            input_delim_start: Str regex pattern to match the start of input section (__START__ for BOF)
-            input_delim_end: Str regex pattern to match the end of input section (__END__ for EOF)
-            output_delim_start: Str regex pattern to match the start of output section
-            output_delim_end: Str regex pattern to match the end of output section
-            bulletpoint_max_level: Maximum level of bullet points to process (-1 for unlimited)
-            must_match_regex: Regex pattern that lines must match to be included. Default is `r"(TODO|DONE|DOING|NOW|LATER)"`
-            sub_pattern: Optional tuple of two strings (search pattern, replace pattern) to modify matched lines. If provided, applies re.sub() using these patterns. Default is (r"(\s*)- (TODO|DONE|DOING|NOW|LATER) ", r"\1- ").
-            remove_block_properties: If True, removes the logseq block properties. Default is True.
-            keep_new_lines: If False, will not keep the newlines from logseq. Default is True.
-            recursive: If True, will process nested TODO items under a matching parent. Default is True.
+            input_file (Path | str): Path or string pointing to the input Markdown/Logseq file.
+            output_file (Path | str): Path or string pointing to the output Markdown/Logseq file.
+            input_delim_start (str): Regex pattern to match the start of input section. Use "__START__" for beginning of file.
+            input_delim_end (str): Regex pattern to match the end of input section. Use "__END__" for end of file.
+            output_delim_start (str): Regex pattern to match the start of output section.
+            output_delim_end (str): Regex pattern to match the end of output section.
+            bulletpoint_max_level (int): Maximum level of bullet points to process. Use -1 for unlimited.
+            must_match_regex (str): Regex pattern that lines must match to be included.
+            sub_pattern (tuple[str, str] | None): Optional tuple of (search pattern, replace pattern) to modify matched lines. Only the first pattern will be compiled.
+            remove_block_properties (bool): If True, removes Logseq block properties.
+            keep_new_lines (bool): If True, preserves newlines from Logseq.
+            recursive (bool): If True, processes nested TODO items under a matching parent.
 
         Raises:
-            ValueError: If delimiters are missing or appear multiple times in files
-            FileNotFoundError: If input file doesn't exist
-            AssertionError: If no blocks or matching lines are found in input
+            ValueError: If delimiters are missing or appear multiple times in files.
+            FileNotFoundError: If input file doesn't exist.
+            AssertionError: If no blocks or matching lines are found in input.
+            Exception: If there's an error compiling the sub_pattern or must_match_regex.
         """
         self.input_file = Path(input_file)
         self.output_file = Path(output_file)
@@ -81,17 +82,21 @@ class MdXLogseqTODOSync:
         """
         Validate that delimiters appear exactly once in the content.
 
-        Checks both start and end delimiters to ensure they appear exactly once in the
-        given content. This helps maintain the integrity of the sync boundaries.
+        This method ensures the integrity of sync boundaries by checking that both start
+        and end delimiters appear exactly once in the given content.
 
         Args:
-            content: The file content to check
-            delims: Tuple of (start, end) delimiters to check
-            file_type: String indicating which file is being checked ('input' or 'output')
+            content (str): The file content to check.
+            delims (Sequence[str]): Tuple or list of (start, end) delimiters to check.
+            file_type (str): String indicating which file is being checked ('input' or 'output').
 
         Raises:
-            ValueError: If any delimiter is missing or appears multiple times, with a
-                      descriptive message indicating which delimiter caused the error
+            ValueError: If any delimiter is missing or appears multiple times. The error
+                        message will specify which delimiter caused the issue.
+
+        Note:
+            The start delimiter "__START__" is a special case that doesn't need to be present in the content.
+            The end delimiter "__END__" is a special case that allows processing until the end of the file.
         """
         start_delim, end_delim = delims
 
@@ -114,18 +119,24 @@ class MdXLogseqTODOSync:
         """
         Process the input file using LogseqMarkdownParser.
 
-        Reads the input file, validates delimiters, and processes blocks between the specified
-        input delimiters. Only blocks matching the required pattern and within the maximum
-        bullet point level are included. The special end delimiter "__END__" can be used to
-        process until the end of file.
+        This method reads the input file, validates delimiters, and processes blocks between
+        the specified input delimiters. It filters blocks based on the required pattern and
+        maximum bullet point level.
 
         Returns:
-            list[str]: Processed and filtered lines with proper indentation
+            list[str]: Processed and filtered lines with proper indentation.
 
         Raises:
-            ValueError: If input delimiters are missing or appear multiple times
-            FileNotFoundError: If input file doesn't exist
-            AssertionError: If no blocks or matching lines are found in input
+            ValueError: If input delimiters are missing or appear multiple times.
+            FileNotFoundError: If the input file doesn't exist.
+            AssertionError: If no blocks or matching lines are found in the input.
+            Exception: If there's an error compiling the must_match_regex.
+
+        Note:
+            - The special start delimiter "__START__" indicates processing from the beginning of the file.
+            - The special end delimiter "__END__" indicates processing until the end of the file.
+            - If recursive processing is enabled, it will include nested items under a matching parent.
+            - Block properties and LOGBOOK entries can be removed based on the remove_block_properties setting.
         """
         with open(self.input_file, 'r') as f:
             content = f.read()
@@ -203,17 +214,22 @@ class MdXLogseqTODOSync:
         """
         Process the output file by replacing content between delimiters with matched lines.
 
-        If the output file exists, replaces content between output delimiters with the new
-        matched lines. If the file doesn't exist or doesn't contain delimiters, creates
-        a new file or appends content respectively. The content is properly dedented
-        before insertion.
+        This method handles the output file operations:
+        - If the output file exists, it replaces content between output delimiters with new matched lines.
+        - If the file doesn't exist or doesn't contain delimiters, it creates a new file or appends content.
+        - The content is properly dedented before insertion.
 
         Args:
-            matched_lines: List of processed lines to insert between delimiters
+            matched_lines (list[str]): List of processed lines to insert between delimiters.
 
         Raises:
-            ValueError: If output delimiters appear multiple times in existing file
-            OSError: If unable to write to output file
+            ValueError: If output delimiters appear multiple times in the existing file.
+            OSError: If unable to write to the output file.
+
+        Note:
+            - The method applies any substitution patterns specified in sub_pattern.
+            - It respects the keep_new_lines setting when processing the matched lines.
+            - The final content is written with spaces instead of tabs for consistency.
         """
         # Read the output file content
         try:
