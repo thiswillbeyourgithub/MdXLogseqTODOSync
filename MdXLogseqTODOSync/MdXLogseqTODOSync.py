@@ -169,6 +169,9 @@ class MdXLogseqTODOSync:
             # Check for delimiter markers
             if start_delim == "__START__":
                 inside_section = True
+                start_delim = "a"
+                while start_delim in content:
+                    start_delim *= 2
             elif re.findall(start_delim, block_content):
                 inside_section = True
                 continue
