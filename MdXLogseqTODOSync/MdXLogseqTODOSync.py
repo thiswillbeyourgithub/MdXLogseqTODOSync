@@ -131,7 +131,10 @@ class MdXLogseqTODOSync:
 
         # First collect all matching blocks
         matching_blocks = []
-        pattern = re.compile(self.required_pattern)
+        try:
+            pattern = re.compile(self.required_pattern)
+        except Exception as e:
+            raise Exception(f"Error when compiling required_pattern argument: '{e}'") from e
         start_delim, end_delim = self.input_delims
 
         # Track if we're inside the delimited section
