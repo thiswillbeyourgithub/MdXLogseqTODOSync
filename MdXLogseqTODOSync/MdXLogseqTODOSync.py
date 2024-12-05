@@ -228,7 +228,7 @@ class MdXLogseqTODOSync:
         replacement = f"{start_delim}\n"
         filtered_lines = [m for m in matched_lines if (self.keep_new_lines or m.strip())]
         if self.remove_pattern:
-            filtered_lines = [re.sub(self.required_pattern, line) for line in filtered_lines]
+            filtered_lines = [re.sub(self.required_pattern, "", line) for line in filtered_lines]
         replacement += dedent("\n".join(filtered_lines).replace("\t", "    "))
         replacement += f"\n{end_delim}"
 
