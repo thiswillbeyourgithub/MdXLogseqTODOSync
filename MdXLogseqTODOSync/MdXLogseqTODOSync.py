@@ -181,7 +181,7 @@ class MdXLogseqTODOSync:
                     for k in keys:
                         block.del_property(k)
                     if ":LOGBOOK:" in block.content and ":END:" in block.content:
-                        content = re.sub(":LOGBOOK:.*:END:", "", block.content, flags=re.MULTILINE|re.DOTALL).strip()
+                        content = re.sub(":LOGBOOK:.*:END:", "", block.content, flags=re.MULTILINE|re.DOTALL).rstrip()
                         matched_lines.append(content)
                     else:
                         matched_lines.append(block.content)
