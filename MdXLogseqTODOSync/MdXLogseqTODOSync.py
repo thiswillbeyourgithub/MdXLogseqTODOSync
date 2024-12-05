@@ -4,6 +4,7 @@ from pathlib import Path
 from collections.abc import Sequence
 import LogseqMarkdownParser
 import re
+import typing
 
 @beartype  # this will apply to all methods
 class MdXLogseqTODOSync:
@@ -21,8 +22,8 @@ class MdXLogseqTODOSync:
         output_delim_end: str = r"<!-- END_TODO -->",
 
         bulletpoint_max_level: int = -1,
-        required_pattern: str = r"(TODO|DONE|DOING|NOW|LATER)",
-        remove_pattern: bool = True,
+        must_match_regex: str = r"\s*- (TODO|DONE|DOING|NOW|LATER|#+) ",
+        sub_pattern: typing.Optional[typing.Tuple[str, str]] = (r"(\s*)- (TODO|DONE|DOING|NOW|LATER) ", r"\1- "),
         remove_block_properties: bool = True,
         keep_new_lines: bool = True,
         recursive: bool = True,
@@ -44,8 +45,8 @@ class MdXLogseqTODOSync:
             output_delim_start: Str regex pattern to match the start of output section
             output_delim_end: Str regex pattern to match the end of output section
             bulletpoint_max_level: Maximum level of bullet points to process (-1 for unlimited)
-            required_pattern: Regex pattern that lines must match to be included. Default is `r"(TODO|DONE|DOING|NOW|LATER)"`
-            remove_pattern: If True, removes the required_pattern from matched lines. Default is True.
+            must_match_regex: Regex pattern that lines must match to be included. Default is `r"(TODO|DONE|DOING|NOW|LATER)"`
+            sub_pattern: Optional tuple of two strings (search pattern, replace pattern) to modify matched lines. If provided, applies re.sub() using these patterns. Default is (r"(\s*)- (TODO|DONE|DOING|NOW|LATER) ", r"\1- ").
             remove_block_properties: If True, removes the logseq block properties. Default is True.
             keep_new_lines: If False, will not keep the newlines from logseq. Default is True.
             recursive: If True, will process nested TODO items under a matching parent. Default is True.
@@ -60,8 +61,13 @@ class MdXLogseqTODOSync:
         self.input_delims = [input_delim_start, input_delim_end]
         self.output_delims = [output_delim_start, output_delim_end]
         self.bulletpoint_max_level = bulletpoint_max_level
-        self.required_pattern = required_pattern
-        self.remove_pattern = remove_pattern
+        self.must_match_regex = must_match_regex
+        self.sub_pattern = sub_pattern
+        if sub_pattern:
+            try:
+                self.sub_pattern = re.compile(sub_pattern[0]), sub_pattern[1]
+            except Exception as e:
+                raise Exception(f"Error when compiling sub_pattern's arguments: '{e}'") from e
         self.remove_block_properties = remove_block_properties
         self.keep_new_lines = keep_new_lines
         self.recursive = True
@@ -132,9 +138,9 @@ class MdXLogseqTODOSync:
         # First collect all matching blocks
         matching_blocks = []
         try:
-            pattern = re.compile(self.required_pattern)
+            pattern = re.compile(self.must_match_regex)
         except Exception as e:
-            raise Exception(f"Error when compiling required_pattern argument: '{e}'") from e
+            raise Exception(f"Error when compiling must_match_regex argument: '{e}'") from e
         start_delim, end_delim = self.input_delims
 
         # Track if we're inside the delimited section
@@ -227,8 +233,8 @@ class MdXLogseqTODOSync:
         # Prepare the replacement content
         replacement = f"{start_delim}\n"
         filtered_lines = [m for m in matched_lines if (self.keep_new_lines or m.strip())]
-        if self.remove_pattern:
-            filtered_lines = [re.sub(self.required_pattern, "", line) for line in filtered_lines]
+        if self.sub_pattern:
+            filtered_lines = [re.sub(self.sub_pattern[0], self.sub_pattern[1], line) for line in filtered_lines]
         replacement += dedent("\n".join(filtered_lines).replace("\t", "    "))
         replacement += f"\n{end_delim}"
 
