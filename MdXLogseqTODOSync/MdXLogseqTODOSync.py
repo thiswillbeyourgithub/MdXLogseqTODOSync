@@ -21,7 +21,7 @@ class MdXLogseqTODOSync:
         output_delim_end: str = r"<!-- END_TODO -->",
 
         bulletpoint_max_level: int = -1,
-        required_pattern: str = r"\s*- (TODO|DONE)",
+        required_pattern: str = r"\s*- (TODO|DONE|DOING|NOW|LATER) ",
         remove_prefix: bool = True,
         remove_block_properties: bool = True,
         keep_new_lines: bool = True,
@@ -44,7 +44,7 @@ class MdXLogseqTODOSync:
             output_delim_start: Str regex pattern to match the start of output section
             output_delim_end: Str regex pattern to match the end of output section
             bulletpoint_max_level: Maximum level of bullet points to process (-1 for unlimited)
-            required_pattern: Regex pattern that lines must match to be included. Default is `r"\s*- (TODO|DONE)"`
+            required_pattern: Regex pattern that lines must match to be included. Default is `r"\s*- (TODO|DONE|DOING|NOW|LATER) "`
             remove_prefix: If True, removes the TODO/DONE prefix from matched lines. Default is True.
             remove_block_properties: If True, removes the logseq block properties. Default is True.
             keep_new_lines: If False, will not keep the newlines from logseq. Default is True.
