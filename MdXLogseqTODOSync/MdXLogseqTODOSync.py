@@ -40,16 +40,16 @@ class MdXLogseqTODOSync:
         Args:
             input_file (Path | str): Path or string pointing to the input Markdown/Logseq file.
             output_file (Path | str): Path or string pointing to the output Markdown/Logseq file.
-            input_delim_start (str): Regex pattern to match the start of input section. Use "__START__" for beginning of file.
-            input_delim_end (str): Regex pattern to match the end of input section. Use "__END__" for end of file.
-            output_delim_start (str): Regex pattern to match the start of output section.
-            output_delim_end (str): Regex pattern to match the end of output section.
-            bulletpoint_max_level (int): Maximum level of bullet points to process. Use -1 for unlimited.
-            must_match_regex (str): Regex pattern that lines must match to be included.
-            sub_pattern (tuple[str, str] | None): Optional tuple of (search pattern, replace pattern) to modify matched lines. Only the first pattern will be compiled.
-            remove_block_properties (bool): If True, removes Logseq block properties.
-            keep_new_lines (bool): If True, preserves newlines from Logseq.
-            recursive (bool): If True, processes nested TODO items under a matching parent.
+            input_delim_start (str, optional): Regex pattern to match the start of input section. Use "__START__" for beginning of file. Default: "- BEGIN_TODO".
+            input_delim_end (str, optional): Regex pattern to match the end of input section. Use "__END__" for end of file. Default: "- END_TODO".
+            output_delim_start (str, optional): Regex pattern to match the start of output section. Default: "<!-- BEGIN_TODO -->".
+            output_delim_end (str, optional): Regex pattern to match the end of output section. Default: "<!-- END_TODO -->".
+            bulletpoint_max_level (int, optional): Maximum level of bullet points to process. Use -1 for unlimited. Default: -1.
+            must_match_regex (str, optional): Regex pattern that lines must match to be included. Default: r"^\s*- (TODO|DONE|DOING|NOW|LATER|#+) ".
+            sub_pattern (tuple[str, str] | None, optional): Optional tuple of (search pattern, replace pattern) to modify matched lines. Only the first pattern will be compiled. Default: (r"^(\s*)- (TODO|DONE|DOING|NOW|LATER) ", r"\1- ").
+            remove_block_properties (bool, optional): If True, removes Logseq block properties. Default: True.
+            keep_new_lines (bool, optional): If True, preserves newlines from Logseq. Default: True.
+            recursive (bool, optional): If True, processes nested TODO items under a matching parent. Default: True.
 
         Raises:
             ValueError: If delimiters are missing or appear multiple times in files.
