@@ -26,26 +26,26 @@ I made this so that updating my [logseq](https://github.com/logseq/logseq) graph
 The tool is primarily used from the command line:
 
 ```bash
-mdxlogseqtodosync --help
+MdXLogseqTODOSync --help
 
 # Basic usage
-mdxlogseqtodosync input.md output.md
+MdXLogseqTODOSync input.md output.md
 
 # With filtering options
-mdxlogseqtodosync --pattern "TODO|DONE" --max-level 2 input.md output.md
+MdXLogseqTODOSync --must-match-regex "TODO|DONE" --bulletpoint-max-level 2 input.md output.md
 
 # Full options
-mdxlogseqtodosync \
-    --input-start "- BEGIN_TODO" \
-    --input-end "- END_TODO" \
-    --output-start "<!-- BEGIN_TODO -->" \
-    --output-end "<!-- END_TODO -->" \
-    --pattern "TODO|DONE" \
-    --max-level 2 \
-    --remove-pattern false \
-    --remove-block-properties true \
-    --keep-new-lines true \
-    --recursive true \
+MdXLogseqTODOSync \
+    --input-delim-start "- BEGIN_TODO" \
+    --input-delim-end "- END_TODO" \
+    --output-delim-start "<!-- BEGIN_TODO -->" \
+    --output-delim-end "<!-- END_TODO -->" \
+    --must-match-regex "TODO|DONE" \
+    --bulletpoint-max-level 2 \
+    --sub-pattern '(\s*)- (TODO|DONE|DOING|NOW|LATER) ' '\\1- ' \
+    --remove-block-properties \
+    --keep-new-lines \
+    --recursive \
     input.md output.md
 ```
 
