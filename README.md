@@ -42,7 +42,7 @@ mdxlogseqtodosync \
     --output-end "<!-- END_TODO -->" \
     --pattern "TODO|DONE" \
     --max-level 2 \
-    --remove-prefix false \
+    --remove-pattern false \
     --remove-block-properties true \
     --keep-new-lines true \
     --recursive true \
@@ -58,8 +58,8 @@ mdxlogseqtodosync \
 - `output_delim_start`: Start delimiter for output file (default: `"<!-- BEGIN_TODO -->"`)
 - `output_delim_end`: End delimiter for output file (default: `"<!-- END_TODO -->"`)
 - `bulletpoint_max_level`: Maximum bullet point level to process (-1 for unlimited)
-- `required_pattern`: Regex pattern that lines must match to be included. Default is `r"\s*- (TODO|DONE)"`
-- `remove_prefix`: Boolean to control whether TODO/DONE prefixes are removed from output (default: True)
+- `required_pattern`: Regex pattern that lines must match to be included. Default is `r"(TODO|DONE|DOING|NOW|LATER)"`
+- `remove_pattern`: Boolean to control whether the required pattern is removed from matched lines (default: True)
 - `remove_block_properties`: Boolean to control whether Logseq block properties are removed (default: True)
 - `keep_new_lines`: Boolean to control whether empty lines are preserved (default: True)
 - `recursive`: Boolean to control whether nested TODOs under a matching parent are included (default: True)
