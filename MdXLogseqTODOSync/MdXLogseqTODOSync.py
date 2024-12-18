@@ -138,6 +138,7 @@ class MdXLogseqTODOSync:
             - If recursive processing is enabled, it will include nested items under a matching parent.
             - Block properties and LOGBOOK entries can be removed based on the remove_block_properties setting.
         """
+        assert self.input_file.exists() and self.input_file.is_file(), f"File '{self.input_file}' not found or not a file"
         with open(self.input_file, 'r') as f:
             content = f.read()
 
