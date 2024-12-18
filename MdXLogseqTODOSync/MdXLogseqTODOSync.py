@@ -15,8 +15,8 @@ class MdXLogseqTODOSync:
         input_file: Path | str,
         output_file: Path | str,
 
-        input_delim_start: str = r"- BEGIN_TODO",
-        input_delim_end: str = r"- END_TODO",
+        input_delim_start: str = r"__START__",
+        input_delim_end: str = r"__END__",
 
         output_delim_start: str = r"<!-- BEGIN_TODO -->",
         output_delim_end: str = r"<!-- END_TODO -->",
@@ -40,8 +40,8 @@ class MdXLogseqTODOSync:
         Args:
             input_file (Path | str): Path or string pointing to the input Markdown/Logseq file.
             output_file (Path | str): Path or string pointing to the output Markdown/Logseq file.
-            input_delim_start (str, optional): Regex pattern to match the start of input section. Use "__START__" for beginning of file. Default: "- BEGIN_TODO".
-            input_delim_end (str, optional): Regex pattern to match the end of input section. Use "__END__" for end of file. Default: "- END_TODO".
+            input_delim_start (str, optional): Regex pattern to match the start of input section. Use "__START__" for beginning of file. Default: "__START__".
+            input_delim_end (str, optional): Regex pattern to match the end of input section. Use "__END__" for end of file. Default: "__END__".
             output_delim_start (str, optional): Regex pattern to match the start of output section. Default: "<!-- BEGIN_TODO -->".
             output_delim_end (str, optional): Regex pattern to match the end of output section. Default: "<!-- END_TODO -->".
             bulletpoint_max_level (int, optional): Maximum level of bullet points to process. Use -1 for unlimited. Default: -1.
