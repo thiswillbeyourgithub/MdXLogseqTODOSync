@@ -28,7 +28,6 @@ class MdXLogseqTODOSync:
         keep_new_lines: bool = True,
         recursive: bool = True,
         ) -> None:
-
         """
         Initialize the MdXLogseqTODOSync class.
 
