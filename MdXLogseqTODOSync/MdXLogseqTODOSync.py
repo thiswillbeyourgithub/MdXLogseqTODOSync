@@ -195,7 +195,7 @@ class MdXLogseqTODOSync:
             # If bulletpoint_max_level is set, skip blocks that are too deep
             if (
                     self.bulletpoint_max_level == -1 or
-                    block.indentation_level >= self.bulletpoint_max_level or
+                    block.indentation_level <= self.bulletpoint_max_level or
                     (self.recursive and block.indentation_level > previous_indentation)
             ):
                 previous_indentation = block.indentation_level
