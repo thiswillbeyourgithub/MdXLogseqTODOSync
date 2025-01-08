@@ -146,7 +146,7 @@ class MdXLogseqTODOSync:
         # Parse the content using LogseqMarkdownParser
         page = LogseqMarkdownParser.parse_text(content=content, verbose=False)
 
-        # First collect all matching blocks
+        # First collect all matching blocks and their descendants
         matching_blocks = []
         try:
             pattern = re.compile(self.must_match_regex)
@@ -156,15 +156,15 @@ class MdXLogseqTODOSync:
 
         # Track if we're inside the delimited section
         inside_section = False
+        # Track if we're in a matching block's subtree
+        in_matching_subtree = False
+        # Track the indentation level of the current matching block
+        current_matching_level = -1
 
         assert page.blocks, "No blocks found in input"
 
-        previous_indentation = page.blocks[0].indentation_level
         for block in page.blocks:
             block_content = block.content
-
-            if block.indentation_level < previous_indentation:
-                previous_indentation = block.indentation_level
 
             # Check for delimiter markers
             if start_delim == "__START__":
@@ -178,10 +178,19 @@ class MdXLogseqTODOSync:
             elif inside_section and end_delim != "__END__" and re.findall(end_delim, block_content):
                 break  # Stop processing after end delimiter
 
-            if inside_section and (pattern.search(block_content) or (self.recursive and block.indentation_level > previous_indentation)):
-                # Store blocks that match the pattern
-                matching_blocks.append(block)
-                previous_indentation = block.indentation_level
+            if inside_section:
+                # Check if this block matches the pattern
+                if pattern.search(block_content):
+                    matching_blocks.append(block)
+                    in_matching_subtree = True
+                    current_matching_level = block.indentation_level
+                # If we're in a matching subtree, keep all descendants
+                elif in_matching_subtree and block.indentation_level > current_matching_level:
+                    matching_blocks.append(block)
+                # If we exit the matching subtree, reset the flags
+                elif in_matching_subtree and block.indentation_level <= current_matching_level:
+                    in_matching_subtree = False
+                    current_matching_level = -1
 
         assert matching_blocks, "No blocks found in input"
 
