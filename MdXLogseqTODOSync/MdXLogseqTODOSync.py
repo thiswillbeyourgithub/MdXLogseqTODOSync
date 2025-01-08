@@ -8,7 +8,7 @@ import typing
 
 @beartype  # this will apply to all methods
 class MdXLogseqTODOSync:
-    VERSION: str = "0.0.19"
+    VERSION: str = "0.1.0"
 
     def __init__(
         self,

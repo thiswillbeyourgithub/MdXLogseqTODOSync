@@ -7,7 +7,7 @@ with open("README.md", "r") as readme:
 
 setup(
     name="MdXLogseqTODOSync",
-    version="0.0.19",
+    version="0.1.0",
     description="Script to always sync a Logseq TODO list with a markdown file",
     long_description=long_description,
     long_description_content_type="text/markdown",
